@@ -5,7 +5,7 @@ public class Main {
         final int NUM_DIGITS = 10;
 
         // Build the object graph
-        PhoneModel model = new PhoneModel();
+        PhoneModel model = new PhoneModel(NUM_DIGITS);
         new Screen(model);
         KeyPad keyPad = new KeyPad(model);
 
