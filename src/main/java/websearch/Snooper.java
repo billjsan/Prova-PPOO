@@ -14,20 +14,24 @@ public class Snooper {
         model.addQueryObserver(new WebSearchModel.QueryObserver() {
             @Override
             public void onQuery(String query) {
-                if(query.contains("gallon")){
-                    System.out.println("[Gallon Found]: " + query);
-                }else {
-                    System.out.println("[Long Query..]:" + query);
-                }
+                System.out.println("[Gallon Found]: " + query);
             }
         }, new WebSearchModel.PoliticaDeFiltragem() {
             @Override
             public boolean vaiNotificar(String texto) {
+                return texto.contains("gallon");
+            }
+        });
 
-                if (texto.contains("gallon") || texto.length() >= 35){
-                    return true;
-                }
-                return false;
+        model.addQueryObserver(new WebSearchModel.QueryObserver() {
+            @Override
+            public void onQuery(String query) {
+                System.out.println("[Long Query..]: " + query);
+            }
+        }, new WebSearchModel.PoliticaDeFiltragem() {
+            @Override
+            public boolean vaiNotificar(String texto) {
+                return texto.length() > 35;
             }
         });
     }
