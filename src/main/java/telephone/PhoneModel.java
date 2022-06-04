@@ -38,6 +38,6 @@ public class PhoneModel {
 
     public void addDigit(int newDigit) {
         digits.add(newDigit);
-        this.propertyChangeSupport.firePropertyChange("evento",newDigit, digits );
+        this.propertyChangeSupport.firePropertyChange(" ",newDigit, digits );
     }
 }

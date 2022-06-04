@@ -5,8 +5,6 @@
 
 package telephone;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
@@ -23,17 +21,19 @@ public class Screen {
 
     private void addSecondObserver(PhoneModel model) {
         model.addListener(evt -> {
-            List<Integer> all = (List<Integer>) evt.getNewValue();
+            try {
+                List<Integer> numbers = (List<Integer>) evt.getNewValue();
+                if(numbers.size() >  model.getMaxLength() - 1){
 
-            if(all.size() >  model.getMaxLength() - 1){
-
-                String texto = "";
-                for (Integer i :all) {
-                    texto += " " + String.valueOf(i);
+                    StringBuilder message = new StringBuilder();
+                    for (Integer i :numbers) {
+                        message.append(" ").append(i);
+                    }
+                    System.out.println("Ligando para:" + message + " ...");
                 }
 
-                System.out.println("ligando para: " + texto + " ...");
-            }
+            }catch (Exception  e){}
+
         });
     }
 
@@ -41,7 +41,7 @@ public class Screen {
         model.addListener(evt -> {
             int lastDigit = (Integer) evt.getOldValue();
 
-            System.out.println("ultimo digito: " + lastDigit);
+            System.out.println(lastDigit);
 
         });
     }
