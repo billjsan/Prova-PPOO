@@ -13,7 +13,7 @@ public class Main {
 
         // Build object graph
         WebSearchModel model = new WebSearchModel(inputTextFile);
-        new Snooper(model); // adiciona snooper como observer
+        new Snooper(model);
 
         // Execute
         model.pretendToSearch();

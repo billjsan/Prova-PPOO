@@ -1,3 +1,8 @@
+/**
+ * author: Willian J. Santos
+ * Date: 03/JUN/2022
+ */
+
 package websearch;
 
 import java.io.*;
@@ -9,33 +14,34 @@ import java.util.List;
  */
 public class WebSearchModel {
     private final File sourceFile;
-    private final List<QueryObserver> observers = new ArrayList<>();
-    private PoliticaDeFiltragem politicaDeFiltragem ;
+    private final List<QueryObserver> observers;
+    private SearchPolicy searchPolicy;
 
-    public interface QueryObserver { // declaraçao da  interface
-        void onQuery(String query); // metodo eh executado no observer quando for notificado
+    public interface QueryObserver {
+        void onQuery(String query);
     }
 
-    public interface PoliticaDeFiltragem {
-        boolean vaiNotificar(String texto);
+    public interface SearchPolicy {
+        String SEARCH_KEY = "gallon";
+        int SEARCH_LENGTH = 35;
+        boolean shouldNotify(String query);
     }
 
     public WebSearchModel(File sourceFile) {
         this.sourceFile = sourceFile;
+        this.observers = new ArrayList<>();
     }
 
-
-    // 01 entry point of execution
     public void pretendToSearch() {
         try (BufferedReader br = new BufferedReader(new FileReader(sourceFile))) {
 
-            while (true) { // 02 percorre todas as queries que estao no arquivo recebido
+            while (true) {
                 String line = br.readLine();
-                if (line == null) { // 05 quando a ultima linha eh lida, sai do for;
+                if (line == null) {
                     break;
                 }
-                if(deveNotificar(line)){
-                    notifyAllObservers(line); // 04 notifica todos os observers passando a nova linha (query) lida
+                if(shouldNotify(line)){
+                    notifyAllObservers(line);
                 }
             }
         } catch (IOException e) {
@@ -43,24 +49,20 @@ public class WebSearchModel {
         }
     }
 
-    public void addQueryObserver(QueryObserver queryObserver) {
-        observers.add(queryObserver); // adiciona a classe snooper como observer
-    }
-
-    public void addQueryObserver(QueryObserver queryObserver, PoliticaDeFiltragem pf) {
-        observers.add(queryObserver); // adiciona a classe snooper como observer
-        politicaDeFiltragem = pf;
+    public void addQueryObserver(QueryObserver queryObserver, SearchPolicy sp) {
+        this.observers.add(queryObserver);
+        this.searchPolicy = sp;
     }
     private void notifyAllObservers(String line) {
-        for (QueryObserver obs : observers) { // 05 notifica todos os observers armazenados na variavel chamando o metodo onQuery
+        for (QueryObserver obs : observers) {
             obs.onQuery(line);
         }
     }
 
-    private boolean deveNotificar(String texto){
+    private boolean shouldNotify(String query){
 
-        if(politicaDeFiltragem != null){
-            return politicaDeFiltragem.vaiNotificar(texto);
+        if(searchPolicy != null){
+            return searchPolicy.shouldNotify(query);
         }
         return true;
     }

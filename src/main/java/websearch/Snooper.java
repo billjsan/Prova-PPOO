@@ -1,3 +1,8 @@
+/**
+ * author: Willian J. Santos
+ * Date: 03/JUN/2022
+ */
+
 package websearch;
 
 /**
@@ -5,30 +10,14 @@ package websearch;
  */
 public class Snooper {
 
-    /**
-     * adiciona uma implementaçao da interface QueryObserver
-     * ao model recebido como parametro no construtor
-     * @param model
-     */
     public Snooper(WebSearchModel model) {
-        model.addQueryObserver(new WebSearchModel.QueryObserver() {
-            @Override
-            public void onQuery(String query) {
-                if(query.contains("gallon")){
-                    System.out.println("[Gallon Found]: " + query);
-                }else {
-                    System.out.println("[Long Query..]:" + query);
-                }
+        model.addQueryObserver(query -> {
+            if(query.contains(WebSearchModel.SearchPolicy.SEARCH_KEY)){
+                System.out.println("[Gallon Found]: " + query);
+            }else {
+                System.out.println("[Long Query..]:" + query);
             }
-        }, new WebSearchModel.PoliticaDeFiltragem() {
-            @Override
-            public boolean vaiNotificar(String texto) {
-
-                if (texto.contains("gallon") || texto.length() >= 35){
-                    return true;
-                }
-                return false;
-            }
-        });
+        }, query -> query.contains(WebSearchModel.SearchPolicy.SEARCH_KEY) ||
+                query.length() > WebSearchModel.SearchPolicy.SEARCH_LENGTH);
     }
 }
