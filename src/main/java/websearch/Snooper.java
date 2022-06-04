@@ -11,13 +11,12 @@ package websearch;
 public class Snooper {
 
     public Snooper(WebSearchModel model) {
-        model.addQueryObserver(query -> {
-            if(query.contains(WebSearchModel.SearchPolicy.SEARCH_KEY)){
-                System.out.println("[Gallon Found]: " + query);
-            }else {
-                System.out.println("[Long Query..]:" + query);
-            }
-        }, query -> query.contains(WebSearchModel.SearchPolicy.SEARCH_KEY) ||
-                query.length() > WebSearchModel.SearchPolicy.SEARCH_LENGTH);
+        //observer 1
+        model.addQueryObserver(query -> System.out.println("[Gallon Found]: " + query),
+                query -> query.contains(WebSearchModel.SearchPolicy.SEARCH_KEY));
+
+        //observer 2
+        model.addQueryObserver(query -> System.out.println("[Long Query..]: " + query),
+                query -> query.length() > WebSearchModel.SearchPolicy.SEARCH_LENGTH);
     }
 }

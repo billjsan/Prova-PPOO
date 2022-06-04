@@ -15,7 +15,7 @@ import java.util.List;
 public class WebSearchModel {
     private final File sourceFile;
     private final List<QueryObserver> observers;
-    private SearchPolicy searchPolicy;
+    private final List<SearchPolicy> searchPolicy;
 
     public interface QueryObserver {
         void onQuery(String query);
@@ -30,6 +30,7 @@ public class WebSearchModel {
     public WebSearchModel(File sourceFile) {
         this.sourceFile = sourceFile;
         this.observers = new ArrayList<>();
+        this.searchPolicy = new ArrayList<>();
     }
 
     public void pretendToSearch() {
@@ -40,9 +41,7 @@ public class WebSearchModel {
                 if (line == null) {
                     break;
                 }
-                if(shouldNotify(line)){
-                    notifyAllObservers(line);
-                }
+                notifyAllObservers(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,21 +50,14 @@ public class WebSearchModel {
 
     public void addQueryObserver(QueryObserver queryObserver, SearchPolicy sp) {
         this.observers.add(queryObserver);
-        this.searchPolicy = sp;
+        this.searchPolicy.add(sp);
     }
     private void notifyAllObservers(String line) {
-        for (QueryObserver obs : observers) {
-            obs.onQuery(line);
-        }
-    }
 
-    private boolean shouldNotify(String query){
-
-        if(searchPolicy != null){
-            return searchPolicy.shouldNotify(query);
+        for (int i = 0; i < observers.size(); i++) {
+            if(searchPolicy.get(i).shouldNotify(line)){
+                observers.get(i).onQuery(line);
+            }
         }
-        return true;
     }
 }
-
-
