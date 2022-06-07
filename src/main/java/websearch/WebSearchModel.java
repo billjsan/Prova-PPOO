@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class WebSearchModel {
     private final File sourceFile;
-    private final List<QueryObserver> observers;
-    private final List<SearchPolicy> searchPolicy;
+    private final List<QueryObserver> observers = new ArrayList<>();
+    private final List<PoliticaDeFiltragem> politicaDeFiltragem = new ArrayList<>();
 
     public interface QueryObserver {
         void onQuery(String query);
@@ -41,21 +41,26 @@ public class WebSearchModel {
                 if (line == null) {
                     break;
                 }
-                notifyAllObservers(line);
+                    notifyAllObservers(line); // 04 notifica todos os observers passando a nova linha (query) lida
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void addQueryObserver(QueryObserver queryObserver, SearchPolicy sp) {
-        this.observers.add(queryObserver);
-        this.searchPolicy.add(sp);
+    public void addQueryObserver(QueryObserver queryObserver) {
+        observers.add(queryObserver); // adiciona a classe snooper como observer
+    }
+
+    public void addQueryObserver(QueryObserver queryObserver, PoliticaDeFiltragem pf) {
+        observers.add(queryObserver); // adiciona a classe snooper como observer
+        politicaDeFiltragem.add(pf);
     }
     private void notifyAllObservers(String line) {
 
         for (int i = 0; i < observers.size(); i++) {
-            if(searchPolicy.get(i).shouldNotify(line)){
+
+            if(politicaDeFiltragem.get(i).vaiNotificar(line)){
                 observers.get(i).onQuery(line);
             }
         }

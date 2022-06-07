@@ -11,12 +11,29 @@ package websearch;
 public class Snooper {
 
     public Snooper(WebSearchModel model) {
-        //observer 1
-        model.addQueryObserver(query -> System.out.println("[Gallon Found]: " + query),
-                query -> query.contains(WebSearchModel.SearchPolicy.SEARCH_KEY));
+        model.addQueryObserver(new WebSearchModel.QueryObserver() {
+            @Override
+            public void onQuery(String query) {
+                System.out.println("[Gallon Found]: " + query);
+            }
+        }, new WebSearchModel.PoliticaDeFiltragem() {
+            @Override
+            public boolean vaiNotificar(String texto) {
+                return texto.contains("gallon");
+            }
+        });
 
-        //observer 2
-        model.addQueryObserver(query -> System.out.println("[Long Query..]: " + query),
-                query -> query.length() > WebSearchModel.SearchPolicy.SEARCH_LENGTH);
+        model.addQueryObserver(new WebSearchModel.QueryObserver() {
+            @Override
+            public void onQuery(String query) {
+                System.out.println("[Long Query..]: " + query);
+            }
+        }, new WebSearchModel.PoliticaDeFiltragem() {
+            @Override
+            public boolean vaiNotificar(String texto) {
+                return texto.length() > 35;
+            }
+        });
+
     }
 }
